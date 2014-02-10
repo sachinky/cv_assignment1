@@ -20,7 +20,8 @@ function plotSIFTSingle(img, points, pSize)
         theta = points{i}.theta;
         r = 4.5*points{i}.sigma;
         circle(x, y, r);
-        plot([x, x+r*cos(theta)], [y, y+r*sin(theta)], 'Color','r','LineWidth',2);
+        text(max(1, x-2), y, '\fontsize{12}\color{blue}+');
+        plot([x, x+r*cos(theta)], [y, y+r*sin(theta)], 'Color','b','LineWidth',1);
     end
 
 end

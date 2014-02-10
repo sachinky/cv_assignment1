@@ -5,10 +5,8 @@ function r=cornerHarris(imgPath, wSize, gaussian, sigma)
     width = size(img, 2);
     threshold = 0.1;
     
-    gradientX = zeros(height, width);
-    gradientY = zeros(height, width);
-    gradientX = sobel(img, height, width, 'x');
-    gradientY = sobel(img, height, width, 'y');
+    gradientX = sobel(img, 'x');
+    gradientY = sobel(img, 'y');
     
     H = zeros(height, width, 3);
     % For every pixel p, H(p) = [Gx(p)*Gx(p), Gx(p)*Gy(p); Gy(p)*Gx(p), Gy(p)*Gy(p)]
@@ -44,7 +42,7 @@ function r=cornerHarris(imgPath, wSize, gaussian, sigma)
 
 end
 
-function r=sobel(img, h, w, direction)
+function r=sobel(img, direction)
     if direction=='x'
         kernel = [1, 0, -1; 2, 0, -2; 1, 0, -1];
     else

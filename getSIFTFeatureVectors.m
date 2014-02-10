@@ -85,17 +85,3 @@ function [r, count] = getSIFTFeatureVectors(gss, points, c2, normG, atanG)
     end
     count = c - 1;
 end
-
-function g = gradient(dog, n_oct, n_spo, dir)
-    g = cell(n_oct, n_spo);
-    for i=1:n_oct
-%         g{i} = {};
-        for j=1:n_spo+3
-            if dir=='x'
-                g{i}{j} = imfilter(dog{i}{j}, [-0.5 0 0.5]);
-            else
-                g{i}{j} = imfilter(dog{i}{j}, [-0.5; 0; 0.5]);
-            end
-        end
-    end
-end
