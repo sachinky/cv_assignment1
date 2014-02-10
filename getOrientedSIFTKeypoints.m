@@ -18,10 +18,10 @@ function r = getOrientedSIFTKeypoints(gss, points)
         o_key = points{i}.octave;
         s_key = points{i}.s;
         delta_okey = del_min*realpow(2, points{i}.octave-1);
-        maxM = uint8(round(x_key + 3*lambda_ori*sigma_key)/delta_okey);
-        minM = uint8(round(x_key - 3*lambda_ori*sigma_key)/delta_okey);
-        maxN = uint8(round(y_key + 3*lambda_ori*sigma_key)/delta_okey);
-        minN = uint8(round(y_key - 3*lambda_ori*sigma_key)/delta_okey);
+        maxM = uint16(round(x_key + 3*lambda_ori*sigma_key)/delta_okey);
+        minM = uint16(round(x_key - 3*lambda_ori*sigma_key)/delta_okey);
+        maxN = uint16(round(y_key + 3*lambda_ori*sigma_key)/delta_okey);
+        minN = uint16(round(y_key - 3*lambda_ori*sigma_key)/delta_okey);
 %         
 %         if(minM<1 || minN<1 || maxM>size(gss{o_key}{1}, 2) || maxN>size(gss{o_key}{1}, 1))
 %             continue;
@@ -43,8 +43,8 @@ function r = getOrientedSIFTKeypoints(gss, points)
                     continue
                 end
                 
-                c_ori = 1/sqrt(2*pi)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/2*(lambda_ori*sigma_key)^2)*((gradM{o_key}{s_key}(n, m) - gradN{o_key}{s_key}(n, m))^2));
-                index = uint8(round(n_bins/(2*pi)*atan2(gradM{o_key}{s_key}(n, m), gradN{o_key}{s_key}(n, m)))) + 1;
+                c_ori = 1/(sqrt(2*pi)*lambda_ori*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_ori*sigma_key)^2)))*((gradM{o_key}{s_key}(n, m) - gradN{o_key}{s_key}(n, m))^2);
+                index = uint16(round(n_bins/(2*pi)*atan2(gradM{o_key}{s_key}(n, m), gradN{o_key}{s_key}(n, m)))) + 1;
                 
                 h_cur(index) = h_cur(index) + c_ori;
             end

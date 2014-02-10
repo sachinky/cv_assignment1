@@ -18,7 +18,7 @@ function r = getSIFTKeypoints(pss)
                         scale = realpow(2, oct-1);
                         delta = delMin*scale;
                         sigma = scale*sigmaMin*realpow(2, (spo+1)/n_spo);
-                        r{c} = struct('y', i*delta, 'x', j*delta, 'sigma', sigma, 'octave', oct, 's', spo+1);
+                        r{c} = struct('y', uint16(i*delta), 'x', uint16(j*delta), 'sigma', sigma, 'octave', oct, 's', spo+1);
                         c = c + 1;
                     end
                 end

@@ -6,5 +6,7 @@ function r = SIFT(imPath)
     sft = getSIFTFeatures(DoG);
     points = getSIFTKeypoints(sft);
     orientedPoints = getOrientedSIFTKeypoints(gss, points);
-    r = orientedPoints;
+    featureVectors = getSIFTFeatureVectors(gss, orientedPoints);
+    r = featureVectors;
+%     r = orientedPoints;
 end
