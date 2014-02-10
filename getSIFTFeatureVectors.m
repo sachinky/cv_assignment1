@@ -1,5 +1,5 @@
-function r = getSIFTFeatureVectors(gss, points)
-    n_oct = size(gss, 2);
+function [r, count] = getSIFTFeatureVectors(gss, points, c2)
+    n_oct = 4;
     n_spo = 3;
     del_min = 0.5;
     n_ori = 8;
@@ -10,7 +10,9 @@ function r = getSIFTFeatureVectors(gss, points)
     gradN = gradient(gss, n_oct, n_spo, 'y');
     
     c = 1;
-    for it=1:size(points, 2)
+    r = cell(c2);
+    
+    for it=1:c2
 %         count = 0;
         h = zeros(n_hist, n_hist, n_ori);
         x_key = points{it}.x;
@@ -86,12 +88,13 @@ function r = getSIFTFeatureVectors(gss, points)
         r{c} = struct('y', y_key, 'x', x_key, 'sigma', sigma_key, 'octave', o_key, 's', s_key, 'theta', theta_key, 'feature', f);
         c = c + 1;
     end
+    count = c - 1;
 end
 
 function g = gradient(dog, n_oct, n_spo, dir)
-    g = {};
+    g = cell(n_oct, n_spo);
     for i=1:n_oct
-        g{i} = {};
+%         g{i} = {};
         for j=1:n_spo+3
             if dir=='x'
                 g{i}{j} = imfilter(dog{i}{j}, [-0.5 0 0.5]);

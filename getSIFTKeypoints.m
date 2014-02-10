@@ -1,11 +1,16 @@
-function r = getSIFTKeypoints(pss)
-    n_oct = size(pss, 2);
+function [r, count] = getSIFTKeypoints(pss)
+    n_oct = 4;
     n_spo = 3;
     delMin = 0.5;
-    sigmaIn = 0.5;
     sigmaMin = 0.8;
     
-    r = {};
+    total = 0;
+    for i=1:n_oct
+        for j=1:n_spo
+            total = total + sum(sum(pss{i}{j}));
+        end
+    end
+    r = cell(total);
     c = 1;
     
     for oct=1:n_oct
@@ -25,4 +30,5 @@ function r = getSIFTKeypoints(pss)
             end
         end
     end
+    count = c - 1;
 end

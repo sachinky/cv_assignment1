@@ -1,13 +1,13 @@
 function r = getSIFTFeatures(DoG)
     n_spo = 3;
-    n_oct = size(DoG, 2);
+    n_oct = 4;
     c_DoG = 0.03;
     c_edge = 10.0;
     edgeThres = (c_edge+1)*(c_edge+1)/c_edge;
     
-    r = {};
+    r = cell(n_oct, n_spo);
     for oct = 1:n_oct
-        r{oct} = {};
+%         r{oct} = {};
         height = size(DoG{oct}{1}, 1);
         width = size(DoG{oct}{1}, 2);
         for spo = 2:n_spo+1

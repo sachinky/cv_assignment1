@@ -1,7 +1,7 @@
-function r = getOrientedSIFTKeypoints(gss, points)
+function [r, count] = getOrientedSIFTKeypoints(gss, points, c1)
     lambda_ori = 1.5;
     n_bins = 36;
-    n_oct = size(gss, 2);
+    n_oct = 4;
     n_spo = 3;
     del_min = 0.5;
     thres_hist = 0.8;
@@ -11,7 +11,9 @@ function r = getOrientedSIFTKeypoints(gss, points)
     
     c=1;
     
-    for i=1:size(points, 2)
+    r = cell(2*c1);
+    
+    for i=1:c1
         x_key = points{i}.x;
         y_key = points{i}.y;
         sigma_key = points{i}.sigma;
@@ -79,13 +81,14 @@ function r = getOrientedSIFTKeypoints(gss, points)
             end
         end
     end
+    count = c - 1;
 end
 
 
 function g = gradient(dog, n_oct, n_spo, dir)
-    g = {};
+    g = cell(n_oct, n_spo);
     for i=1:n_oct
-        g{i} = {};
+%         g{i} = {};
         for j=1:n_spo+3
             if dir=='x'
                 g{i}{j} = imfilter(dog{i}{j}, [-0.5 0 0.5]);
