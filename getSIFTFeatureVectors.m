@@ -78,7 +78,7 @@ function r = getSIFTFeatureVectors(gss, points)
             end
         end
         
-        fNorm = sqrt(sum(f.*f));
+        fNorm = norm(f);
         
         f = min(f./fNorm, 0.2);
         f = uint8(256.*f);
