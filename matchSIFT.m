@@ -1,7 +1,7 @@
 function m = matchSIFT(fA, fB)
     numFeaturesA = size(fA, 2);
     numFeaturesB = size(fB, 2);
-    c_match_rel = 0.6;
+    c_match_rel = 0.8;
     
     c = 1;
     m = {};
@@ -29,7 +29,7 @@ function m = matchSIFT(fA, fB)
             end
         end
         
-        if(small < 10 && small <= c_match_rel*small2 && used(index)==0)
+        if(small < 20 && small <= c_match_rel*small2 && used(index)==0)
             m{c} = [fA{i} fB{index}];
             used(index) = 1;
             c = c + 1;

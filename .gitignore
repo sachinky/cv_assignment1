@@ -216,6 +216,12 @@ pip-log.txt
 
 #Images
 Dataset/*
+*.jpg
+*.png
+*.gif
+*.bmp
+*.ppm
+*.pgm
 
 #MATLAB temps
 *.asv
