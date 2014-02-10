@@ -1,5 +1,5 @@
-function plotSIFT(img1, img2, matching)
-    mSize = size(matching, 2);
+function plotSIFT(img1, img2, matching, mSize)
+%     mSize = size(matching, 2);
     points1 = zeros(mSize, 2);
     points2 = zeros(mSize, 2);
     

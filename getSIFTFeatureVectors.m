@@ -47,7 +47,7 @@ function [r, count] = getSIFTFeatureVectors(gss, points, c2)
                 if (max(x_cap, y_cap)<lambda_descr*(n_hist+1)/n_hist && m>=1 && n>=1 && m<=limM && n<=limN)
                     theta_cap = mod(atan2(gradM{o_key}{s_key}(n, m), gradN{o_key}{s_key}(n, m)) - theta_key, 2*pi);
                     
-                    c_descr = 1.0/(sqrt(2*pi)*lambda_descr*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_descr*sigma_key)^2)))*((gradM{o_key}{s_key}(n, m) - gradN{o_key}{s_key}(n, m))^2);
+                    c_descr = 1.0/(sqrt(2*pi)*lambda_descr*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_descr*sigma_key)^2)))*(sqrt(gradM{o_key}{s_key}(n, m)^2 + gradN{o_key}{s_key}(n, m)^2));
                     
                     for i=1:n_hist
                         for j=1:n_hist

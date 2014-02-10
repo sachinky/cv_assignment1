@@ -28,7 +28,7 @@ function r = getSIFTFeatures(DoG)
             
             edgeness = ((H(:, :, 1) + H(:, :, 3)) .* (H(:, :, 1) + H(:, :, 3))) ./ (H(:, :, 1).*H(:, :, 3) - H(:, :, 2).*H(:, :, 2));
 %             edgeness = zeros(height, width);
-            r{oct}{spo-1} = DoG{oct}{spo}>0.8*c_DoG & edgeness < edgeThres & ((A & D > max(B, C)) | (Am & Dm > max(Bm, Cm)));
+            r{oct}{spo-1} = abs(DoG{oct}{spo}) > 0.8*c_DoG & edgeness < edgeThres & ((A & D > max(B, C)) | (Am & Dm > max(Bm, Cm)));
         end
     end
     

@@ -13,6 +13,10 @@ function [r, count] = getSIFTKeypoints(pss)
     r = cell(total);
     c = 1;
     
+    imHeight = size(pss{1}{1}, 1)*delMin;
+    imWidth = size(pss{1}{1}, 2)*delMin;
+    
+
     for oct=1:n_oct
         height = size(pss{oct}{1}, 1);
         width = size(pss{oct}{1}, 2);
@@ -23,8 +27,10 @@ function [r, count] = getSIFTKeypoints(pss)
                         scale = realpow(2, oct-1);
                         delta = delMin*scale;
                         sigma = scale*sigmaMin*realpow(2, (spo+1)/n_spo);
-                        r{c} = struct('y', uint16(i*delta), 'x', uint16(j*delta), 'sigma', sigma, 'octave', oct, 's', spo+1);
-                        c = c + 1;
+                        if not(uint16(i*delta) < 0.01*imHeight || uint16(i*delta) > 0.99*imHeight || uint16(j*delta) < 0.01*imWidth || uint16(j*delta) > 0.99*imWidth)
+                            r{c} = struct('y', uint16(i*delta), 'x', uint16(j*delta), 'sigma', sigma, 'octave', oct, 's', spo+1);
+                            c = c + 1;
+                        end
                     end
                 end
             end

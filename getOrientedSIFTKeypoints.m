@@ -1,4 +1,4 @@
-function [r, count] = getOrientedSIFTKeypoints(gss, points, c1)
+function [r, count, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, points, c1)
     lambda_ori = 1.5;
     n_bins = 36;
     n_oct = 4;
@@ -9,6 +9,14 @@ function [r, count] = getOrientedSIFTKeypoints(gss, points, c1)
     gradM = gradient(gss, n_oct, n_spo, 'x');
     gradN = gradient(gss, n_oct, n_spo, 'y');
     
+    normG = cell(n_oct, n_spo);
+    atanG = cell(n_oct, n_spo);
+    for i=1:n_oct
+        for j=1:n_spo
+            normG{i}{j} = sqrt(gradM{i}{j}.^2 + gradN{i}{j}.^2);
+            atanG{i}{j} = atan2(gradM{o_key}{s_key}, gradN{o_key}{s_key});
+        end
+    end
     c=1;
     
     r = cell(2*c1);
@@ -45,8 +53,8 @@ function [r, count] = getOrientedSIFTKeypoints(gss, points, c1)
                     continue
                 end
                 
-                c_ori = 1/(sqrt(2*pi)*lambda_ori*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_ori*sigma_key)^2)))*((gradM{o_key}{s_key}(n, m) - gradN{o_key}{s_key}(n, m))^2);
-                index = uint16(round(n_bins/(2*pi)*atan2(gradM{o_key}{s_key}(n, m), gradN{o_key}{s_key}(n, m)))) + 1;
+                c_ori = 1/(sqrt(2*pi)*lambda_ori*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_ori*sigma_key)^2)))*(sqrt(gradM{o_key}{s_key}(n, m)^2 + gradN{o_key}{s_key}(n, m)^2));
+                index = uint16(round(n_bins/(2*pi)*atanG{o_key}{s_key}(n, m))) + 1;
                 
                 h_cur(index) = h_cur(index) + c_ori;
             end
