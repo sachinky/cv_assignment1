@@ -5,9 +5,13 @@ function [r, count] = SIFT(imPath)
     DoG = dogScaleSpace(gss);
     sft = getSIFTFeatures(DoG);
     [points, c0] = getSIFTKeypoints(sft);
+    c0
     [refinedPoints, c1] = refinePoints(DoG, points, c0);
-    [orientedPoints, c2, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, refinedPoints, c1);
-    [featureVectors, c3] = getSIFTFeatureVectors(gss, orientedPoints, c2, gradM, gradN, normG, atanG);
+    c1
+    [orientedPoints, c2, normG, atanG] = getOrientedSIFTKeypoints(gss, refinedPoints, c1);
+    c2
+    [featureVectors, c3] = getSIFTFeatureVectors(gss, orientedPoints, c2, normG, atanG);
+    c3
     r = featureVectors;
     count = c3;
 %     r = orientedPoints;

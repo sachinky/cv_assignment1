@@ -1,4 +1,4 @@
-function [r, count, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, points, c1)
+function [r, count, normG, atanG] = getOrientedSIFTKeypoints(gss, points, c1)
     lambda_ori = 1.5;
     n_bins = 36;
     n_oct = 4;
@@ -11,6 +11,7 @@ function [r, count, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, 
     
     normG = cell(n_oct, n_spo+3);
     atanG = cell(n_oct, n_spo+3);
+    
     for i=1:n_oct
         for j=1:n_spo+3
             normG{i}{j} = sqrt(gradM{i}{j}.^2 + gradN{i}{j}.^2);
@@ -22,8 +23,8 @@ function [r, count, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, 
     r = cell(2*c1);
     
     for i=1:c1
-        x_key = points{i}.x;
-        y_key = points{i}.y;
+        x_key = double(points{i}.x);
+        y_key = double(points{i}.y);
         sigma_key = points{i}.sigma;
         o_key = points{i}.octave;
         s_key = points{i}.s;
@@ -32,10 +33,6 @@ function [r, count, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, 
         minM = uint16(round(x_key - 3*lambda_ori*sigma_key)/delta_okey);
         maxN = uint16(round(y_key + 3*lambda_ori*sigma_key)/delta_okey);
         minN = uint16(round(y_key - 3*lambda_ori*sigma_key)/delta_okey);
-%         
-%         if(minM<1 || minN<1 || maxM>size(gss{o_key}{1}, 2) || maxN>size(gss{o_key}{1}, 1))
-%             continue;
-%         end
         
         h_cur = zeros(1, n_bins);
         limM = size(gss{o_key}{1}, 2);
@@ -52,15 +49,15 @@ function [r, count, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, 
                 if n<1 || n>limN
                     continue
                 end
-                
-                c_ori = 1/(sqrt(2*pi)*lambda_ori*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_ori*sigma_key)^2)))*normG{o_key}{s_key}(n, m);
+
+                c_ori = 1.0/(sqrt(2*pi)*lambda_ori*sigma_key)*exp(-double(((double(m)*delta_okey - x_key)^2 + (double(n)*delta_okey - y_key)^2)/(2*(lambda_ori*double(sigma_key))^2)))*normG{o_key}{s_key}(n, m);
                 index = uint16(round(n_bins/(2*pi)*atanG{o_key}{s_key}(n, m))) + 1;
                 
                 h_cur(index) = h_cur(index) + c_ori;
             end
         end
         
-        h_new = zeros(1, n_bins);
+%         h_new = zeros(1, n_bins);
         for j=1:6
 %             for bin=1:n_bins
 %                 if bin==1
@@ -97,7 +94,6 @@ end
 function g = gradient(dog, n_oct, n_spo, dir)
     g = cell(n_oct, n_spo);
     for i=1:n_oct
-%         g{i} = {};
         for j=1:n_spo+3
             if dir=='x'
                 g{i}{j} = imfilter(dog{i}{j}, [-0.5 0 0.5]);

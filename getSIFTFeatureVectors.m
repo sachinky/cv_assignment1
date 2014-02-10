@@ -1,13 +1,8 @@
-function [r, count] = getSIFTFeatureVectors(gss, points, c2, gradM, gradN, normG, atanG)
-    n_oct = 4;
-    n_spo = 3;
+function [r, count] = getSIFTFeatureVectors(gss, points, c2, normG, atanG)
     del_min = 0.5;
     n_ori = 8;
     n_hist = 4;
     lambda_descr = 6.0;
-    
-%     gradM = gradient(gss, n_oct, n_spo, 'x');
-%     gradN = gradient(gss, n_oct, n_spo, 'y');
     
     c = 1;
     r = cell(c2);

@@ -18,7 +18,7 @@ function plotSIFTSingle(img, points, pSize)
         x = double(points{i}.x);
         y = double(points{i}.y);
         theta = points{i}.theta;
-        r = 7.5*points{i}.sigma;
+        r = 4.5*points{i}.sigma;
         circle(x, y, r);
         plot([x, x+r*cos(theta)], [y, y+r*sin(theta)], 'Color','r','LineWidth',2);
     end
