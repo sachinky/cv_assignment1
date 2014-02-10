@@ -23,12 +23,12 @@ function [r, count] = getSIFTKeypoints(pss)
         for spo=1:n_spo
             for i=1:height
                 for j=1:width
-                    if pss{oct}{spo}(i, j) > 0.001
+                    if pss{oct}{spo}(i, j)
                         scale = realpow(2, oct-1);
                         delta = delMin*scale;
                         sigma = scale*sigmaMin*realpow(2, (spo+1)/n_spo);
                         if not(uint16(i*delta) < 0.01*imHeight || uint16(i*delta) > 0.99*imHeight || uint16(j*delta) < 0.01*imWidth || uint16(j*delta) > 0.99*imWidth)
-                            r{c} = struct('y', uint16(i*delta), 'x', uint16(j*delta), 'sigma', sigma, 'octave', oct, 's', spo+1);
+                            r{c} = struct('m', j, 'n', i, 'sigma', sigma, 'octave', oct, 's', spo+1);
                             c = c + 1;
                         end
                     end

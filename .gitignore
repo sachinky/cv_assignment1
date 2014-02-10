@@ -225,3 +225,8 @@ Dataset/*
 
 #MATLAB temps
 *.asv
+
+#Compressed files
+*.zip
+*.rar
+*.tar.gz

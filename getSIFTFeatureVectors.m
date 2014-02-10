@@ -1,4 +1,4 @@
-function [r, count] = getSIFTFeatureVectors(gss, points, c2)
+function [r, count] = getSIFTFeatureVectors(gss, points, c2, gradM, gradN, normG, atanG)
     n_oct = 4;
     n_spo = 3;
     del_min = 0.5;
@@ -6,8 +6,8 @@ function [r, count] = getSIFTFeatureVectors(gss, points, c2)
     n_hist = 4;
     lambda_descr = 6.0;
     
-    gradM = gradient(gss, n_oct, n_spo, 'x');
-    gradN = gradient(gss, n_oct, n_spo, 'y');
+%     gradM = gradient(gss, n_oct, n_spo, 'x');
+%     gradN = gradient(gss, n_oct, n_spo, 'y');
     
     c = 1;
     r = cell(c2);
@@ -45,9 +45,9 @@ function [r, count] = getSIFTFeatureVectors(gss, points, c2)
                 y_cap = (-(m*delta_okey - x_key)*sin(theta_key) + (n*delta_okey - y_key)*cos(theta_key))/sigma_key;
                 
                 if (max(x_cap, y_cap)<lambda_descr*(n_hist+1)/n_hist && m>=1 && n>=1 && m<=limM && n<=limN)
-                    theta_cap = mod(atan2(gradM{o_key}{s_key}(n, m), gradN{o_key}{s_key}(n, m)) - theta_key, 2*pi);
+                    theta_cap = mod(atanG{o_key}{s_key}(n, m) - theta_key, 2*pi);
                     
-                    c_descr = 1.0/(sqrt(2*pi)*lambda_descr*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_descr*sigma_key)^2)))*(sqrt(gradM{o_key}{s_key}(n, m)^2 + gradN{o_key}{s_key}(n, m)^2));
+                    c_descr = 1.0/(sqrt(2*pi)*lambda_descr*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_descr*sigma_key)^2)))*normG{o_key}{s_key}(n, m);
                     
                     for i=1:n_hist
                         for j=1:n_hist

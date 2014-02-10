@@ -9,12 +9,12 @@ function [r, count, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, 
     gradM = gradient(gss, n_oct, n_spo, 'x');
     gradN = gradient(gss, n_oct, n_spo, 'y');
     
-    normG = cell(n_oct, n_spo);
-    atanG = cell(n_oct, n_spo);
+    normG = cell(n_oct, n_spo+3);
+    atanG = cell(n_oct, n_spo+3);
     for i=1:n_oct
-        for j=1:n_spo
+        for j=1:n_spo+3
             normG{i}{j} = sqrt(gradM{i}{j}.^2 + gradN{i}{j}.^2);
-            atanG{i}{j} = atan2(gradM{o_key}{s_key}, gradN{o_key}{s_key});
+            atanG{i}{j} = atan2(gradN{i}{j}, gradM{i}{j});
         end
     end
     c=1;
@@ -53,7 +53,7 @@ function [r, count, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, 
                     continue
                 end
                 
-                c_ori = 1/(sqrt(2*pi)*lambda_ori*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_ori*sigma_key)^2)))*(sqrt(gradM{o_key}{s_key}(n, m)^2 + gradN{o_key}{s_key}(n, m)^2));
+                c_ori = 1/(sqrt(2*pi)*lambda_ori*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_ori*sigma_key)^2)))*normG{o_key}{s_key}(n, m);
                 index = uint16(round(n_bins/(2*pi)*atanG{o_key}{s_key}(n, m))) + 1;
                 
                 h_cur(index) = h_cur(index) + c_ori;
@@ -62,21 +62,22 @@ function [r, count, gradM, gradN, normG, atanG] = getOrientedSIFTKeypoints(gss, 
         
         h_new = zeros(1, n_bins);
         for j=1:6
-            for bin=1:n_bins
-                if bin==1
-                    h_new(bin) = h_cur(n_bins) + h_cur(1) + h_cur(2);
-                else
-                    if bin==n_bins
-                        h_new(bin) = h_cur(n_bins-1) + h_cur(n_bins) + h_cur(1);
-                    else
-                         h_new(bin) = h_cur(bin-1) + h_cur(bin) + h_cur(bin+1);
-                    end
-                end
-                
-                h_new(bin) = h_cur(bin)/3.0;
-            end
-            
-            h_cur = h_new;
+%             for bin=1:n_bins
+%                 if bin==1
+%                     h_new(bin) = h_cur(n_bins) + h_cur(1) + h_cur(2);
+%                 else
+%                     if bin==n_bins
+%                         h_new(bin) = h_cur(n_bins-1) + h_cur(n_bins) + h_cur(1);
+%                     else
+%                          h_new(bin) = h_cur(bin-1) + h_cur(bin) + h_cur(bin+1);
+%                     end
+%                 end
+%                 
+%                 h_new(bin) = h_cur(bin)/3.0;
+%             end
+%             
+%             h_cur = h_new;
+            h_cur = cconv(h_cur, [1 1 1]/3, n_bins);
         end
         
         for bin=1:n_bins
