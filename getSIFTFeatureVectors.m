@@ -8,7 +8,7 @@ function [r, count] = getSIFTFeatureVectors(gss, points, c2, normG, atanG)
     r = cell(c2);
     
     for it=1:c2
-%         count = 0;
+        fCount = 0;
         h = zeros(n_hist, n_hist, n_ori);
         x_key = points{it}.x;
         y_key = points{it}.y;
@@ -35,26 +35,31 @@ function [r, count] = getSIFTFeatureVectors(gss, points, c2, normG, atanG)
         end
         
         for m=minM:maxM
+            if m<1 || m>limM
+                continue;
+            end
+            
             for n=minN:maxN
+                if n<1 || n>limN
+                    continue;
+                end
                 x_cap = ((m*delta_okey - x_key)*cos(theta_key) + (n*delta_okey - y_key)*sin(theta_key))/sigma_key;
                 y_cap = (-(m*delta_okey - x_key)*sin(theta_key) + (n*delta_okey - y_key)*cos(theta_key))/sigma_key;
                 
-                if (max(x_cap, y_cap)<lambda_descr*(n_hist+1)/n_hist && m>=1 && n>=1 && m<=limM && n<=limN)
+                if max(x_cap, y_cap)<lambda_descr*(n_hist+1)/n_hist
                     theta_cap = mod(atanG{o_key}{s_key}(n, m) - theta_key, 2*pi);
                     
                     c_descr = 1.0/(sqrt(2*pi)*lambda_descr*sigma_key)*exp(-double(((m*delta_okey - x_key)^2 + (n*delta_okey - y_key)^2)/(2*(lambda_descr*sigma_key)^2)))*normG{o_key}{s_key}(n, m);
                     
                     for i=1:n_hist
-                        for j=1:n_hist
-                            if (abs(x_cent(i) - x_cap) <= 2*lambda_descr/n_hist && abs(x_cent(j) - y_cap) <= 2*lambda_descr/n_hist)
-                                for k=1:n_ori
-                                    if mod(theta_cap - theta_key - (2*pi)*(k-1)/n_ori, 2*pi) < 2*pi/n_ori
-                                        
-%                                         if c_descr>0.01
-%                                             count = count+1;
-%                                         end
-                                        
-                                        h(i, j, k) = h(i, j, k) + (1 - n_hist/(2*lambda_descr)*abs(x_cap - x_cent(i)))*(1 - n_hist/(2*lambda_descr)*abs(y_cap - y_cent(j)))*(1 - n_ori/(2*pi)*abs(mod(theta_cap - theta_key - (2*pi)*(k-1)/n_ori, 2*pi)))*1000*c_descr;
+                        if abs(x_cent(i) - x_cap) <= 2*lambda_descr/n_hist
+                            for j=1:n_hist
+                                if abs(y_cent(j) - y_cap) <= 2*lambda_descr/n_hist
+                                    for k=1:n_ori
+                                        if mod(theta_cap - (2*pi)*(k-1)/n_ori, 2*pi) < 2*pi/n_ori
+                                            fCount = fCount + 1;
+                                            h(i, j, k) = h(i, j, k) + (1 - n_hist/(2*lambda_descr)*abs(x_cap - x_cent(i)))*(1 - n_hist/(2*lambda_descr)*abs(y_cap - y_cent(j)))*(1 - n_ori/(2*pi)*abs(mod(theta_cap - theta_key - (2*pi)*(k-1)/n_ori, 2*pi)))*1000*c_descr;
+                                        end
                                     end
                                 end
                             end
@@ -64,8 +69,8 @@ function [r, count] = getSIFTFeatureVectors(gss, points, c2, normG, atanG)
             end
         end
         
-%         count
-        f = zeros(1, (n_hist^2)*n_ori);
+        fCount
+        f = zeros(1, n_hist*n_hist*n_ori);
         
         for i=1:n_hist
             for j=1:n_hist
@@ -76,8 +81,11 @@ function [r, count] = getSIFTFeatureVectors(gss, points, c2, normG, atanG)
         end
         
         fNorm = norm(f);
+        f = min(f, 0.2*fNorm);
         
-        f = min(f./fNorm, 0.2);
+        fNorm = norm(f);
+        f = f./fNorm;
+        
         f = uint8(256.*f);
         
         r{c} = struct('y', y_key, 'x', x_key, 'sigma', sigma_key, 'octave', o_key, 's', s_key, 'theta', theta_key, 'feature', f);

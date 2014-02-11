@@ -1,24 +1,16 @@
 function plotSIFTSingle(img, points, pSize)
-%     pSize = size(points, 2);
-    coords = zeros(pSize, 3);
-    
-%     for i=1:pSize
-%         coords(i, 1) = points{i}.x;
-%         coords(i, 2) = points{i}.y;
-%         coords(i, 3) = 7.5*points{i}.sigma;
-%     end
+    sigmaIn = 0.5;
     
     figure;
     imshow(img);
-%     colormap(gray(256));
     axis image;
     hold on;
-%     plot(coords(:, 1), coords(:, 2), 'go');
+    
     for i=1:pSize
         x = double(points{i}.x);
         y = double(points{i}.y);
         theta = points{i}.theta;
-        r = 4.5*points{i}.sigma;
+        r = 6.0*points{i}.sigma*sigmaIn;
         circle(x, y, r);
         text(max(1, x-2), y, '\fontsize{12}\color{blue}+');
         plot([x, x+r*cos(theta)], [y, y+r*sin(theta)], 'Color','b','LineWidth',1);
